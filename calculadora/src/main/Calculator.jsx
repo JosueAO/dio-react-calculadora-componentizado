@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import './Calculator.css'
 
-import Display from './components/Display';
+import Button from './components/Button'
+import Display from './components/Display'
 
-import Button from './components/Button';
 
 const initialState = {
     displayValue: '0',
@@ -30,7 +30,30 @@ export default class Calculator extends Component {
     }
 
     setOperation(operation) {
-        console.log(operation)
+        if (this.state.current ===0) {
+            this.setState({ operation, current:1, clearDisplay:true})
+        } else {
+            const equals = operation === '='
+            const curretOperation = this.state.operation
+
+            const values = [...this.state.values]
+
+            try {
+                values[0] = eval(`${values[0]} ${curretOperation} ${values[1]}`)
+
+            } catch(e) {
+                values[0] = this.state.values[0]
+            }
+
+            values[1] = 0
+
+            this.setState({
+                displayValue: values[0],
+                operation: equals ? null : operation,
+                curret: equals ? 0 : 1,
+                clearDisplay: !equals,
+            })
+        }
     }
 
     addDigit(n) {
@@ -58,6 +81,7 @@ export default class Calculator extends Component {
     render() {
       //  const addDigit = n => this.addDigit(0)
       //  const setOperation = op => this.setOperation(op)
+     
         return (
             <div className="calculator">
                 <Display value={this.state.displayValue} />
